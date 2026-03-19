@@ -26,6 +26,7 @@ public class SecurityConfig {
                 // 3. 配置路径权限
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/health").permitAll()
                         .requestMatchers("/", "/login", "/register", "/user/login", "/user/register").permitAll()
                         .requestMatchers("/captcha/generate", "/item/search", "/item/detail/**").permitAll()
                         // 放行后台页面和接口 (开发阶段建议先全部放行，上线再收紧)

@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:${SERVER_PORT:8080}}
   servlet:
     context-path: /
   tomcat:
@@ -29,16 +29,16 @@ spring:
       max-request-size: 100MB
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:campus_market}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true}
-    username: ${DB_USERNAME:campus}
-    password: ${DB_PASSWORD:123456}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://${DB_HOST:${MYSQLHOST:localhost}}:${DB_PORT:${MYSQLPORT:3306}}/${DB_NAME:${MYSQLDATABASE:campus_market}}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:${MYSQLUSER:campus}}
+    password: ${DB_PASSWORD:${MYSQLPASSWORD:123456}}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      host: ${REDIS_HOST:${REDISHOST:localhost}}
+      port: ${REDIS_PORT:${REDISPORT:6379}}
+      password: ${REDIS_PASSWORD:${REDISPASSWORD:}}
 
   jpa:
     hibernate:
