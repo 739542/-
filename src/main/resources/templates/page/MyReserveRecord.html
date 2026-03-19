@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的预订</title>
+</head>
+<body>
+<div id="b">
+    <div class="row" style="margin-top: 5px">
+        <div class="col-md-3">
+            <div th:replace="~{common/menuPersonalHubs::#m}"></div>
+        </div>
+        <div class="col-md-9">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">首页</a></li>
+                <li class="breadcrumb-item"><a href="/user/center">个人中心</a></li>
+                <li class="breadcrumb-item active">我的预订</li>
+            </ol>
+
+            <span th:if="${reserveRecordList != null && reserveRecordList.size()!=0}" style="float: right; color: red;">
+                共 <span th:text="${reserveRecordList.size()}"></span> 条记录
+            </span>
+
+            <table class="table table-bordered table-striped table-hover" th:if="${reserveRecordList != null && reserveRecordList.size()!=0}">
+                <thead>
+                <tr>
+                    <th style="text-align: center; width: 20%;">预订时间</th>
+                    <th style="text-align: center; width: 40%;">商品名称</th>
+                    <th style="text-align: center; width: 15%;">状态</th>
+                    <th style="text-align: center; width: 25%;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order:${reserveRecordList}">
+                    <td th:text="${#dates.format(order.createTime,'yyyy-MM-dd HH:mm:ss')}" style="text-align: center; vertical-align: middle;"></td>
+
+                    <td style="vertical-align: middle;">
+                        <a th:href="@{'/item/detail/'+${order.itemId}}" target="_blank">
+                            <span th:text="${#strings.abbreviate(order.itemName,25)}" class="status-icon hint--top" th:aria-label="${order.itemName}"></span>
+                        </a>
+                    </td>
+
+                    <td style="text-align: center; vertical-align: middle;">
+                        <span th:if="${order.status==0}" class="badge badge-primary">预订中</span>
+                        <span th:if="${order.status==1}" class="badge badge-secondary">已取消</span>
+                        <span th:if="${order.status==2}" class="badge badge-success">交易完成</span>
+                    </td>
+
+                    <td style="text-align: center; vertical-align: middle;">
+                        <a th:href="@{'/item/detail/'+${order.itemId}}" class="btn btn-info btn-sm hint--top" aria-label="查看商品详情">
+                            <i class="fa fa-search"></i>
+                        </a>
+
+                        <a th:if="${order.status==0}"
+                           th:href="@{'/order/cancel?id='+${order.id}}"
+                           class="btn btn-danger btn-sm hint--top"
+                           aria-label="取消预订"
+                           onclick="return confirm('取消后商品将重新上架，确定要取消吗？')">
+                            <i class="fa fa-times"></i> 取消
+                        </a>
+
+                        <span th:if="${order.status!=0}" class="btn btn-sm disabled" style="visibility: hidden"><i class="fa fa-times"></i></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${reserveRecordList == null || reserveRecordList.size()==0}" class="alert alert-warning text-center">
+                暂无预订记录，去 <a href="/">首页</a> 逛逛吧！
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

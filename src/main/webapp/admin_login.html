@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>后台登录 - CampusMarket</title>
+    <meta name="author" content="DeathGhost"/>
+    <link rel="short icon" href="/static/images/favicon.png">
+    <link rel="stylesheet" type="text/css" href="/static/css/styleLoginPage.css"/>
+    <style>
+        body {
+            height: 100%;
+            background: #16a085;
+            overflow: hidden;
+        }
+        canvas {
+            z-index: -1;
+            position: absolute;
+        }
+        .admin_login {
+            width: 300px;
+            height: auto;
+            overflow: hidden;
+            margin: 10% auto 0 auto;
+            padding: 40px;
+            box-shadow: 0 -15px 30px #0d957a;
+            border-radius: 5px;
+        }
+        .admin_login dt {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 5px #000;
+            margin-bottom: 20px;
+        }
+        .admin_login dd {
+            margin-bottom: 15px;
+            position: relative; /* 确保图标定位 */
+        }
+        .login_txtbx {
+            width: 100%; /* 调整宽度以适应容器 */
+            height: 40px;
+            line-height: 40px;
+            padding: 0 10px; /* 增加内边距 */
+            border: 1px solid #dcdcdc;
+            border-radius: 3px;
+            box-sizing: border-box; /* 确保 padding 不撑大元素 */
+        }
+        .submit_btn {
+            width: 100%;
+            height: 40px;
+            border: none;
+            background: #048f74;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .submit_btn:hover {
+            background: #007b5e;
+        }
+        .checkcode {
+            display: flex;
+            justify-content: space-between;
+        }
+        .checkcode input {
+            width: 60%;
+        }
+        .checkcode img {
+            width: 35%;
+            height: 40px;
+            cursor: pointer;
+            border: 1px solid #dcdcdc;
+            border-radius: 3px;
+        }
+    </style>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/static/js/verifyCode.js"></script>
+    <script src="/static/js/Particleground.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 粒子背景特效
+            $('body').particleground({
+                dotColor: '#5cbdaa',
+                lineColor: '#5cbdaa'
+            });
+        });
+
+        function submitData() {
+            var userName = $("#userName").val();
+            var password = $("#password").val();
+            var imageCode = $("#imageCode").val();
+
+            if (userName == "") {
+                alert("请输入用户名！");
+                return;
+            }
+            if (password == "") {
+                alert("请输入密码！");
+                return;
+            }
+            if (imageCode == "") {
+                alert("请输入验证码！");
+                return;
+            }
+
+            $.ajax({
+                url: "/admin/login", // 修正接口地址
+                type: "post",
+                data: {username: userName, password: password, imageCode: imageCode}, // 注意参数名 username 小写
+                dataType: "json",
+                success: function (result) {
+                    if (result.success == true) {
+                        window.location.href = "/mainAdministrator.html";
+                    } else {
+                        alert(result.errorInfo);
+                        changeImg(); // 失败刷新验证码
+                    }
+                },
+                error: function() {
+                    alert("登录请求失败，请检查网络或服务器状态");
+                }
+            });
+        }
+
+        function changeImg() {
+            var imgSrc = $("#imgObj");
+            imgSrc.attr("src", "/captcha/generate?timestamp=" + (new Date()).valueOf());
+        }
+    </script>
+</head>
+<body>
+<form id="fm">
+    <dl class="admin_login">
+        <dt>
+            <strong>后台登录</strong>
+            <em>Administrator Login</em>
+        </dt>
+        <dd class="user_icon">
+            <input type="text" id="userName" placeholder="账号" class="login_txtbx"/>
+        </dd>
+        <dd class="pwd_icon">
+            <input type="password" id="password" placeholder="密码" class="login_txtbx"/>
+        </dd>
+        <dd class="val_icon">
+            <div class="checkcode">
+                <input type="text" id="imageCode" placeholder="验证码" maxlength="4" class="login_txtbx">
+                <img id="imgObj" title="看不清，换一张" src="/captcha/generate" onclick="changeImg()"/>
+            </div>
+        </dd>
+        <dd>
+            <input type="button" value="立即登录" class="submit_btn" onclick="submitData()"/>
+        </dd>
+        <dd>
+            <p style="text-align:center; color:#eee; font-size:12px;">© CampusMarket 版权所有</p>
+        </dd>
+    </dl>
+</form>
+</body>
+</html>

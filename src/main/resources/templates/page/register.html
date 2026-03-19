@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+</head>
+<body>
+<div id="b">
+    <div class="col-md-6" style="margin-left: 25%">
+        <form role="form" method="post" action="/user/register" enctype="multipart/form-data"
+              onsubmit="return checkRegister()" autocomplete="off">
+
+            <h3 style="text-align: center">新用户注册&nbsp;&nbsp;</h3>
+            <div class="form-group">
+                <p class="help-block" style="float: right">已有账号?去<a href="/login"><span
+                        class="badge badge-pill badge-info" style="color: white">登录</span></a></p>
+            </div>
+
+            <div class="form-group">
+                <label>用户名 <span style="color:red">*</span></label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名" required="required">
+            </div>
+
+            <div class="form-group">
+                <label>密码 <span style="color:red">*</span></label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" required="required">
+            </div>
+
+            <div class="form-group">
+                <label>昵称 <span style="color:red">*</span></label>
+                <input type="text" class="form-control" name="nickName" placeholder="请输入昵称" required="required">
+            </div>
+
+            <div class="form-group">
+                <label>邮箱 <span style="color:red">*</span> (用于找回密码)</label>
+                <div class="input-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="例如：123456@qq.com" required="required">
+                    <div class="input-group-append">
+                        <button class="btn btn-info" type="button" id="sendBtn" onclick="sendCode()">获取验证码</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>验证码 <span style="color:red">*</span></label>
+                <input type="text" class="form-control" name="emailCode" placeholder="请输入邮件中的验证码"
+                       required="required" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label>上传头像 (可选)</label>
+                <input type="file" class="form-control-file" name="avatarFile">
+            </div>
+
+            <div class="form-group" th:if="${errorInfo!=null}">
+                <p style="color: red" th:text="${errorInfo}"></p>
+            </div>
+
+            <div style="text-align: center">
+                <button type="submit" class="btn btn-success px-5">注册</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function sendCode() {
+            var email = $("#email").val();
+            if (!email || email.indexOf('@') == -1) {
+                alert("请先输入正确的邮箱地址！");
+                return;
+            }
+
+            var btn = $("#sendBtn");
+            btn.attr("disabled", true);
+            var count = 60;
+            var timer = setInterval(function () {
+                count--;
+                btn.text(count + "秒后重发");
+                if (count <= 0) {
+                    clearInterval(timer);
+                    btn.attr("disabled", false);
+                    btn.text("获取验证码");
+                }
+            }, 1000);
+
+            $.post("/user/sendRegisterCode", {
+                email: email
+            }, function (res) {
+                if (res.success) {
+                    alert("验证码已发送，请查收邮件！");
+                } else {
+                    alert(res.errorInfo);
+                    clearInterval(timer);
+                    btn.attr("disabled", false);
+                    btn.text("获取验证码");
+                }
+            });
+        }
+
+        function checkRegister() {
+            var pwd = document.getElementById("password").value;
+            if(pwd.length < 6) {
+                alert("密码长度不能少于6位");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</div>
+</body>
+</html>

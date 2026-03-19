@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页内容</title>
+</head>
+<body>
+<div id="indexFirst" th:fragment="content">
+
+    <div class="jumbotron jumbotron-fluid text-white" style="background-color: #32629F; padding: 2rem 1rem; margin-top: 10px; border-radius: 5px;">
+        <div class="container">
+            <h1 class="display-4">欢迎来到含弘易物</h1>
+            <p class="lead">安全、便捷的西南大学预定平台平台。</p>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 5px">
+        <div class="col-md-12">
+            <div class="card" style="margin-top: 5px">
+                <div class="card-header bg-white" style="border-color: #32629F; color: #32629F;">
+                    <i class="fa fa-dropbox"></i> <b>最近发布</b>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-4" th:each="item : ${newItemList}">
+                            <div class="card h-100 shadow-sm">
+                                <a th:href="@{'/item/detail/'+${item.id}}">
+                                    <img class="card-img-top"
+                                         th:src="@{'/static/images/articleImage/'+${item.coverImage}}"
+                                         style="height: 180px; object-fit: cover;"
+                                         alt="商品图片"
+                                         onerror="this.src='/static/images/logo.png'">
+                                </a>
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <a th:href="@{'/item/detail/'+${item.id}}" th:text="${#strings.abbreviate(item.name,15)}"
+                                           style="color: #333; text-decoration: none;"></a>
+                                    </h6>
+                                    <p class="card-text text-danger font-weight-bold">
+                                        ￥<span th:text="${item.price}"></span>
+                                        <small class="text-muted" th:if="${item.originalPrice!=null}">
+                                            <del>￥<span th:text="${item.originalPrice}"></span></del>
+                                        </small>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-white border-0">
+                                    <a th:href="@{'/item/detail/'+${item.id}}" class="btn btn-sm btn-block"
+                                       style="color: #32629F; border-color: #32629F; background-color: transparent;"
+                                       onmouseover="this.style.backgroundColor='#32629F'; this.style.color='white'"
+                                       onmouseout="this.style.backgroundColor='transparent'; this.style.color='#32629F'">查看详情</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px">
+                <div class="card-header bg-white border-danger text-danger">
+                    <i class="fa fa-fire"></i> <b>热门推荐</b>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-4" th:each="item : ${hotItemList}">
+                            <div class="card h-100 shadow-sm">
+                                <a th:href="@{'/item/detail/'+${item.id}}">
+                                    <img class="card-img-top"
+                                         th:src="@{'/static/images/articleImage/'+${item.coverImage}}"
+                                         style="height: 180px; object-fit: cover;"
+                                         alt="商品图片"
+                                         onerror="this.src='/static/images/logo.png'">
+                                </a>
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <a th:href="@{'/item/detail/'+${item.id}}" th:text="${#strings.abbreviate(item.name,15)}"
+                                           style="color: #333; text-decoration: none;"></a>
+                                    </h6>
+                                    <p class="card-text text-danger font-weight-bold">
+                                        ￥<span th:text="${item.price}"></span>
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-white border-0">
+                                    <a th:href="@{'/item/detail/'+${item.id}}" class="btn btn-outline-danger btn-sm btn-block">查看详情</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>联系管理员</title>
+</head>
+<body>
+<div id="b">
+    <div class="row" style="margin-top: 5px">
+        <div class="col-md-3">
+            <div th:replace="~{common/menuPersonalHubs::#m}"></div>
+        </div>
+        <div class="col-md-9">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">首页</a></li>
+                <li class="breadcrumb-item"><a href="/user/center">个人中心</a></li>
+                <li class="breadcrumb-item active">联系管理员</li>
+            </ol>
+
+            <div class="card">
+                <div class="card-header">给我们留言</div>
+                <div class="card-body">
+                    <form role="form" method="post" action="/feedback/save">
+                        <div class="form-group">
+                            <label>留言内容：</label>
+                            <textarea class="form-control" rows="8" id="content" name="content"
+                                      placeholder="请输入您的建议、投诉或反馈..." required="required"></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-5">提交留言</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

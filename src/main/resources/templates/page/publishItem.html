@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>发布商品</title>
+</head>
+<body>
+<div id="b" th:fragment="content">
+    <div class="row" style="margin-top: 5px">
+        <div class="col-md-3">
+            <div th:include="common/menuPersonalHubs::#m"></div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">发布闲置商品</div>
+                <div class="card-body">
+                    <form role="form" method="post" action="/item/save" enctype="multipart/form-data" onsubmit="return checkAddGoodsValue()">
+                        <div class="form-group">
+                            <label>商品名称</label>
+                            <label>
+                                <input type="text" class="form-control" name="name" placeholder="请输入商品名称" required>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>分类</label>
+                            <label>
+                                <select name="categoryId" class="form-control" required>
+                                    <option value="">请选择分类...</option>
+                                    <option th:each="type : ${categoryList}" th:value="${type.id}" th:text="${type.name}"></option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>出售价格 (元)</label>
+                                <label>
+                                    <input type="number" step="0.01" class="form-control" name="price" placeholder="0.00" required>
+                                </label>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>原价 (元，可选)</label>
+                                <label>
+                                    <input type="number" step="0.01" class="form-control" name="originalPrice" placeholder="0.00">
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>封面图片</label>
+                            <input type="file" class="form-control-file" name="mainImage" required>
+                            <small class="form-text text-muted">请上传一张清晰的商品实拍图作为封面。</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>商品描述</label>
+                            <textarea id="contentGoods" name="description" class="form-control" rows="8" placeholder="描述一下你的宝贝..."></textarea>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary px-5">提交发布</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        if (typeof CKEDITOR !== 'undefined') {
+            CKEDITOR.replace('contentGoods', {
+                // 1. 弹窗上传 (点击图标->上传标签->发送到服务器)
+                // 这里不加 ?responseType=json，CKEditor 会发送 CKEditorFuncNum 参数
+                // 您的 Java 后端检测到这个参数，就会返回 HTML Script，从而避免“打印弹窗”
+                filebrowserImageUploadUrl: '/item/uploadImage',
+
+                // 2. 拖拽/粘贴上传
+                // 这里 CKEditor 会期待 JSON，您的 Java 后端在没检测到 CKEditorFuncNum 时会返回 JSON
+                uploadUrl: '/item/uploadImage',
+
+                height: 300
+            });
+        } else {
+            console.error("CKEditor 未加载");
+        }
+
+        function checkAddGoodsValue() {
+            if (typeof CKEDITOR !== 'undefined') {
+                for (instance in CKEDITOR.instances) {
+                    CKEDITOR.instances[instance].updateElement();
+                }
+            }
+            return true;
+        }
+    </script>
+</div>
+</body>
+</html>

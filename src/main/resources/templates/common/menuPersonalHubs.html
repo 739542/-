@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Personal Menu</title>
+</head>
+<body>
+<div id="m">
+  <div class="card">
+    <div class="card-header">
+      <div class="text-center">
+        <img th:if="${session.currentUser.imageName != null && session.currentUser.imageName != '' && session.currentUser.imageName != 'default.jpg'}"
+             th:src="@{'/static/images/userImage/'+${session.currentUser.imageName}}"
+             class="img-fluid img-thumbnail"
+             style="width:100px;height:100px;object-fit:cover;"
+             alt="用户头像">
+
+        <img th:if="${session.currentUser.imageName == null || session.currentUser.imageName == '' || session.currentUser.imageName == 'default.jpg'}"
+             th:src="@{/images/default.jpg}"
+             class="img-fluid img-thumbnail"
+             style="width:100px;height:100px;object-fit:cover;"
+             alt="默认头像">
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="list-group list-group-flush">
+        <a href="/user/info" class="list-group-item list-group-item-action"><i class="fa fa-user"></i> 个人资料</a>
+        <a href="/item/my" class="list-group-item list-group-item-action"><i class="fa fa-cubes"></i> 我的商品</a>
+        <a href="/order/my" class="list-group-item list-group-item-action"><i class="fa fa-shopping-cart"></i> 我的预订</a>
+        <a href="/contact/my" class="list-group-item list-group-item-action"><i class="fa fa-address-book"></i> 联系方式</a>
+        <a href="/item/publish" class="list-group-item list-group-item-action"><i class="fa fa-plus-circle"></i> 发布商品</a>
+        <a href="/notification/my" class="list-group-item list-group-item-action"><i class="fa fa-bell"></i> 我的消息</a>
+        <a href="/feedback/my" class="list-group-item list-group-item-action"><i class="fa fa-comments"></i> 我的留言</a>
+        <a href="/feedback/toContact" class="list-group-item list-group-item-action"><i class="fa fa-envelope"></i> 联系管理员</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>修改个人信息</title>
+</head>
+<body>
+<div id="b">
+    <div class="row" style="margin-top: 5px">
+        <div class="col-md-3">
+            <div th:replace="~{common/menuPersonalHubs::#m}"></div>
+        </div>
+        <div class="col-md-9">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">首页</a></li>
+                <li class="breadcrumb-item"><a href="/user/center">个人中心</a></li>
+                <li class="breadcrumb-item active">查看个人信息</li>
+            </ol>
+
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">基本信息</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-right font-weight-bold">头像：</div>
+                        <div class="col-md-9">
+                            <img th:if="${session.currentUser.imageName != null && session.currentUser.imageName != '' && session.currentUser.imageName != 'default.jpg'}"
+                                 th:src="@{'/static/images/userImage/'+${session.currentUser.imageName}}"
+                                 style="width: 100px; height: 100px; object-fit: cover;"
+                                 class="img-thumbnail">
+
+                            <img th:if="${session.currentUser.imageName == null || session.currentUser.imageName == '' || session.currentUser.imageName == 'default.jpg'}"
+                                 th:src="@{/images/default.jpg}"
+                                 style="width: 100px; height: 100px; object-fit: cover;"
+                                 class="img-thumbnail">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-3 text-right font-weight-bold">用户名：</div>
+                        <div class="col-md-9"><span th:text="${session.currentUser.username}"></span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-3 text-right font-weight-bold">昵称：</div>
+                        <div class="col-md-9"><span th:text="${session.currentUser.nickName}"></span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-3 text-right font-weight-bold">用户类型：</div>
+                        <div class="col-md-9"><span th:text="${session.currentUser.type==1?'管理员':'普通用户'}"></span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-3 text-right font-weight-bold">邮箱：</div>
+                        <div class="col-md-9"><span th:text="${session.currentUser.email}"></span></div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">修改信息</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">修改个人信息</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" method="post" enctype="multipart/form-data" action="/user/update">
+                                <div class="form-group">
+                                    <label>用户名 (不可修改)</label>
+                                    <input type="text" class="form-control" disabled="disabled" th:value="${session.currentUser.username}">
+                                </div>
+                                <div class="form-group">
+                                    <label>昵称</label>
+                                    <input type="text" class="form-control" name="nickName" th:value="${session.currentUser.nickName}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>新密码 (不修改请留空)</label>
+                                    <input type="password" class="form-control" name="password" th:value="${session.currentUser.password}" required>
+                                    <small class="form-text text-muted">注意：此处需输入原密码或新密码</small>
+                                </div>
+                                <div class="form-group">
+                                    <label>更换头像</label>
+                                    <input type="file" class="form-control-file" name="avatarFile">
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">保存修改</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

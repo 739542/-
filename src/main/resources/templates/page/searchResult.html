@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>搜索结果</title>
+</head>
+<body>
+<div id="b" th:fragment="content">
+    <div class="row" style="margin-top: 5px">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa fa-search"></i> 搜索 "<span th:text="${keyword}"></span>" 的结果
+                    <span class="badge badge-light ml-2" th:text="${itemList.size()}">0</span> 个
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" th:if="${itemList.size() == 0}">
+                        没有找到相关商品，换个关键词试试？
+                    </div>
+
+                    <div class="row">
+                        <div class="card col-md-3 mb-4" th:each="item : ${itemList}">
+                            <a th:href="${'/item/detail/'+item.id}">
+                                <img class="card-img-top"
+                                     th:src="@{'/static/images/articleImage/'+${item.coverImage}}"
+                                     style="height: 180px; object-fit: cover;"
+                                     onerror="this.src='/static/images/logo.png'">
+                            </a>
+                            <div class="card-body">
+                                <a th:href="${'/item/detail/'+item.id}" class="status-icon hint--top" th:aria-label="${item.name}">
+                                    <h6 class="card-title" th:text="${#strings.abbreviate(item.name,15)}"></h6>
+                                </a>
+                                <p class="card-text text-danger font-weight-bold">
+                                    ￥<span th:text="${item.price}"></span>
+                                </p>
+                                <a th:href="${'/item/detail/'+item.id}" class="btn btn-primary btn-sm btn-block">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

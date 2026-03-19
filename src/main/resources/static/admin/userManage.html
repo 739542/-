@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<!--suppress ALL-->
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>用户管理</title>
+
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.7.0/themes/metro-blue/easyui.css">
+
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.7.0/themes/icon.css">
+
+    <script type="text/javascript" src="/static/jquery-easyui-1.7.0/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/static/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+
+    <script type="text/javascript" src="/static/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
+
+    <script type="text/javascript">
+        var url;
+
+        // 格式化用户类型
+        function formatType(val, row) {
+            if (val == 1) return '<span style="color:red;font-weight:bold;">管理员</span>';
+            if (val == 2) return '普通用户';
+            return val;
+        }
+
+        // 格式化状态
+        function formatStatus(val, row) {
+            if (val == 1) return '<span style="color:green;">正常</span>';
+            if (val == 0) return '<span style="color:gray;">封禁</span>';
+            return val;
+        }
+
+        function searchUser() {
+            $("#dg").datagrid('load', {
+                "username": $("#s_userName").val()
+            });
+        }
+
+        function openUserAddDialog() {
+            $("#dlg").dialog("open").dialog("setTitle", "添加用户信息");
+            url = "/admin/user/save";
+        }
+
+        function openUserModifyDialog() {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length != 1) {
+                $.messager.alert("系统提示", "请选择一条要编辑的数据！");
+                return;
+            }
+            var row = selectedRows[0];
+            $("#dlg").dialog("open").dialog("setTitle", "编辑用户信息");
+            $("#fm").form("load", row);
+            $("#password").val(""); // 清空密码框，避免显示加密后的字符
+            url = "/admin/user/save?id=" + row.id;
+        }
+
+        function saveUser() {
+            $("#fm").form("submit", {
+                url: url,
+                onSubmit: function() {
+                    return $(this).form("validate");
+                },
+                success: function(result) {
+                    var result = eval('(' + result + ')');
+                    if (result.success) {
+                        $.messager.alert("系统提示", "保存成功！");
+                        resetValue();
+                        $("#dlg").dialog("close");
+                        $("#dg").datagrid("reload");
+                    } else {
+                        $.messager.alert("系统提示", "保存失败！");
+                    }
+                }
+            });
+        }
+
+        function resetValue() {
+            $("#userName").val("");
+            $("#password").val("");
+            $("#trueName").val("");
+            $("#email").val("");
+            $("#type").combobox("setValue", "2");
+        }
+
+        function closeUserDialog() {
+            $("#dlg").dialog("close");
+            resetValue();
+        }
+
+        function deleteUser() {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length == 0) {
+                $.messager.alert("系统提示", "请选择要删除的数据！");
+                return;
+            }
+            var strIds = [];
+            for (var i = 0; i < selectedRows.length; i++) {
+                strIds.push(selectedRows[i].id);
+            }
+            var ids = strIds.join(",");
+            $.messager.confirm("系统提示", "您确定要删除这<font color=red>" + selectedRows.length + "</font>条数据吗？", function(r) {
+                if (r) {
+                    $.post("/admin/user/delete", {ids: ids}, function(result) {
+                        if (result.success) {
+                            $.messager.alert("系统提示", "数据已成功删除！");
+                            $("#dg").datagrid("reload");
+                        } else {
+                            $.messager.alert("系统提示", "数据删除失败！");
+                        }
+                    }, "json");
+                }
+            });
+        }
+
+        function toggleStatus(status) {
+            var selectedRows = $("#dg").datagrid("getSelections");
+            if (selectedRows.length == 0) {
+                $.messager.alert("系统提示", "请选择要操作的用户！");
+                return;
+            }
+            // 简单处理：一次操作一个，或者循环处理
+            if (selectedRows.length > 1) {
+                $.messager.alert("系统提示", "请一次选择一条数据进行操作！");
+                return;
+            }
+            var row = selectedRows[0];
+            if (row.type == 1 && status == 0) {
+                $.messager.alert("系统提示", "不能封禁管理员！");
+                return;
+            }
+
+            $.post("/admin/user/toggleStatus", {id: row.id, status: status}, function(result) {
+                if (result.success) {
+                    $.messager.alert("系统提示", "操作成功！");
+                    $("#dg").datagrid("reload");
+                } else {
+                    $.messager.alert("系统提示", "操作失败！");
+                }
+            }, "json");
+        }
+    </script>
+</head>
+<body style="margin: 1px">
+<table id="dg" title="用户管理" class="easyui-datagrid"
+       fitColumns="true" pagination="true" rownumbers="true"
+       url="/admin/user/list" fit="true" toolbar="#tb">
+    <thead>
+    <tr>
+        <th field="cb" checkbox="true" align="center"></th>
+        <th field="id" width="20" align="center">ID</th>
+        <th field="username" width="80" align="center">用户名</th>
+        <th field="password" width="100" align="center">密码(加密)</th>
+        <th field="nickName" width="50" align="center">昵称</th>
+        <th field="email" width="100" align="center">邮箱</th>
+        <th field="type" width="40" align="center" formatter="formatType">用户类型</th>
+        <th field="status" width="40" align="center" formatter="formatStatus">状态</th>
+    </tr>
+    </thead>
+</table>
+
+<div id="tb">
+    <div>
+        <a href="javascript:openUserAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+        <a href="javascript:openUserModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+        <a href="javascript:deleteUser()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+        <span style="margin-left:10px;">|</span>
+        <a href="javascript:toggleStatus(0)" class="easyui-linkbutton" iconCls="icon-no" plain="true">封禁</a>
+        <a href="javascript:toggleStatus(1)" class="easyui-linkbutton" iconCls="icon-ok" plain="true">解封</a>
+    </div>
+    <div>
+        &nbsp;用户名：<input type="text" id="s_userName" size="20" onkeydown="if(event.keyCode==13) searchUser()"/>
+        <a href="javascript:searchUser()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+    </div>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width: 450px;height: 320px;padding: 10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <form id="fm" method="post">
+        <table cellspacing="8px">
+            <tr>
+                <td>用户名：</td>
+                <td><input type="text" id="userName" name="username" class="easyui-validatebox" required="true"/></td>
+            </tr>
+            <tr>
+                <td>密码：</td>
+                <td><input type="password" id="password" name="password" class="easyui-validatebox" required="true"/></td>
+            </tr>
+            <tr>
+                <td>昵称：</td>
+                <td><input type="text" id="trueName" name="nickName" class="easyui-validatebox" required="true"/></td>
+            </tr>
+            <tr>
+                <td>邮箱：</td>
+                <td><input type="text" id="email" name="email" class="easyui-validatebox" validType="email"/></td>
+            </tr>
+            <tr>
+                <td>用户类型：</td>
+                <td>
+                    <select class="easyui-combobox" id="type" name="type" editable="false" panelHeight="auto" style="width:155px">
+                        <option value="2">普通用户</option>
+                        <option value="1">管理员</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="dlg-buttons">
+    <a href="javascript:saveUser()" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:closeUserDialog()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+</div>
+</body>
+</html>

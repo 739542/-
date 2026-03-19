@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="b">
+    <div class="row" style="margin-top: 5px">
+        <!--公告列表和推荐商品-->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white"><i class="fa fa-google-wallet"></i>公告</div>
+                <div class="card-body">
+                    <div>
+                        <p th:each="announcement:${announcementList}"><a th:href="${'/announcement/'+announcement.id}" th:text="${announcement.title}" class=" status-icon hint--top" th:aria-label="${announcement.title}"></a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 8px" th:if="${goodsRecommendList.size()>0}">
+                <div class="card-header bg-primary text-white"><i class="fa fa-houzz"></i>推荐商品</div>
+                <div class="card-body">
+                    <div>
+                        <div class="row" th:each="goodsRecommend:${goodsRecommendList}">
+                            <div class="col-md-4">
+                                <img th:src="@{'/static/images/articleImage/'+${goodsRecommend.imageName}+'.jpg'}"
+                                     alt=""
+                                     style="width: 88px;height: 60px">
+                            </div>
+                            <div class="col-md-8">
+                                <div>
+                                    <a th:href="${'/goods/'+goodsRecommend.id}" class="status-icon hint--top" th:aria-label="${goodsRecommend.name}"><span th:text="${#strings.abbreviate(goodsRecommend.name,20)}"></span></a>
+                                    <p style="color: #b52b27">￥<span th:text="${goodsRecommend.priceNow}"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--公告详情-->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white"><i class="fa fa-eye"></i>公告详情</div>
+                <div class="card-body">
+                    <h4 th:text="${announcement.title}" style="text-align: center"></h4>
+                    <p style="color: grey;text-align: center">发布时间: <span th:text="${#dates.format(announcement.time,'yyyy-MM-dd HH:mm:ss')}"></span> | 阅读次数: <span th:text="${announcement.click}"></span></p>
+                    <p th:utext="${announcement.content}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

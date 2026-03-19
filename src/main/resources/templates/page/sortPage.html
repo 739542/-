@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="b">
+    <div class="row" style="margin-top: 5px">
+        <!--商品分类列表和推荐商品-->
+        <div class="col-md-3">
+            <div th:include="common/menuSortAndRecommend::#m"></div>
+        </div>
+        <!--商品详情-->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white"><i class="fa fa-eercast"></i><span th:text="${goodsTypeName}"></span></div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="card col-md-4" th:each="goods:${goodsList}">
+                            <a th:href="${'/goods/'+goods.id}"><img class="card-img-top"
+                                                                    th:src="@{'/static/images/articleImage/'+${goods.coverImage}+'.jpg'}"
+                                                                    alt="Card image"
+                                                                    style="width:100%"></a>
+                            <div class="card-body">
+                                <a th:href="${'/goods/'+goods.id}" class="status-icon hint--top"
+                                   th:aria-label="${goods.name}"><h6
+                                        class="card-title" th:text="${#strings.abbreviate(goods.name,15)}"></h6>
+                                </a>
+                                <p class="card-text">￥<span th:text="${goods.priceNow}"></span>&nbsp;&nbsp;&nbsp;&nbsp;<del
+                                        th:if="${goods.priceLast!=0&&goods.priceLast>goods.priceNow}"
+                                        style="color: darkred">￥
+                                </del>
+                                    <del
+                                            th:text="${goods.priceLast}"
+                                            th:if="${goods.priceLast!=0&&goods.priceLast>goods.price}"
+                                            style="color: darkred"></del>
+                                </p>
+                                <a th:href="${'/goods/'+goods.id}" class="btn btn-primary btn-sm">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <ul class="pagination justify-content-center">
+                        <p th:utext="${pageCode}"></p>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

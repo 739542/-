@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>分类与推荐侧边栏</title>
+</head>
+<body>
+<div id="m">
+
+  <div class="card mb-3 shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <i class="fa fa-bars"></i> 商品分类
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <a href="/" class="text-dark"><i class="fa fa-angle-right"></i> 全部商品</a>
+      </li>
+      <li class="list-group-item" th:each="category : ${categoryList}">
+        <a th:href="@{'/item/category/'+${category.id}}" class="text-dark">
+          <i class="fa fa-angle-right"></i> <span th:text="${category.name}"></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-danger text-white">
+      <i class="fa fa-fire"></i> 热门推荐
+    </div>
+    <div class="card-body">
+      <div th:each="goods : ${goodsRecommendList}">
+        <div class="text-center">
+          <a th:href="@{'/item/detail/'+${goods.id}}">
+            <img th:src="@{'/static/images/articleImage/'+${goods.coverImage}}"
+                 class="img-fluid rounded"
+                 style="max-height: 150px; width: auto; border: 1px solid #f0f0f0;"
+                 alt="商品图片"
+                 onerror="this.src='/static/images/logo.png'">
+          </a>
+        </div>
+        <div class="mt-2 text-center">
+          <a th:href="@{'/item/detail/'+${goods.id}}"
+             th:text="${#strings.abbreviate(goods.name,12)}"
+             class="text-dark font-weight-bold"
+             style="text-decoration: none;">
+          </a>
+          <div class="text-danger mt-1">
+            <strong>￥<span th:text="${goods.price}"></span></strong>
+          </div>
+        </div>
+        <hr th:if="${!goodsStat.last}" style="margin: 10px 0;">
+      </div>
+
+      <div th:if="${goodsRecommendList == null || goodsRecommendList.size() == 0}" class="text-center text-muted">
+        <small>暂无推荐</small>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

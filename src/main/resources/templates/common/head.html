@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>页头</title>
+</head>
+<body>
+<div id="h">
+    <div class="row">
+        <div class="col-md-9">
+            <a href="/">
+                <img th:src="@{/static/images/logo.png}"
+                     id="img1"
+                     loading="lazy"
+                     style="height: 70px; width: auto; max-width: 100%;"
+                     alt="Campus Market Logo">
+            </a>
+        </div>
+        <div class="col-md-3">
+            <p style="float: right;margin-top: 14%">
+                <span th:if="${session.currentUser==null}">
+                    <a href="/login"><span class="badge badge-pill badge-success">登录</span></a>
+                    <a href="/register"><span class="badge badge-pill badge-info">注册</span></a>
+                </span>
+
+                <span th:if="${session.currentUser!=null}">
+                    <a href="/user/center"><span class="badge badge-pill badge-success">个人中心</span></a>
+
+                    <a href="/notification/my"><span class="badge badge-pill badge-info">我的消息</span></a>
+
+                    <a href="javascript:logoutUser()"><span class="badge badge-pill badge-danger">注销</span></a>
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-expand-sm navbar-dark" style="background-color: #32629F;">
+                <ul class="navbar-nav">
+                    <li class="nav-item active"><a class="nav-link" href="/">首页</a></li>
+
+                    <li class="nav-item"><a class="nav-link" th:href="@{/item/search}">全部商品</a></li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+                            分类查看
+                        </a>
+                        <div class="dropdown-menu">
+                            <div th:if="${categoryList != null}">
+                                <a class="dropdown-item" th:each="c : ${categoryList}"
+                                   th:href="@{'/item/category/'+${c.id}}"
+                                   th:text="${c.name}">分类名</a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="nav-item"><a class="nav-link" href="/item/publish">发布闲置</a></li>
+                </ul>
+
+                <div style="margin-left: 20%">
+                    <form class="d-flex form-inline" action="/item/search" method="get">
+                        <input class="form-control mr-2" type="text" id="keyword" name="keyword"
+                               th:value="${keyword}" placeholder="搜索商品...">
+                        <button class="btn btn-light" type="submit" style="color:#32629F">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+</body>
+</html>

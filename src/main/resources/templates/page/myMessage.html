@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的消息</title>
+    <style>
+        .chat-box {
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+        }
+        .chat-item {
+            margin-bottom: 10px;
+            clear: both;
+        }
+        .chat-item.me {
+            text-align: right;
+        }
+        .chat-bubble {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .me .chat-bubble {
+            background-color: #007bff;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .other .chat-bubble {
+            background-color: #e9ecef;
+            color: #333;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-meta {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="b">
+    <div class="row" style="margin-top: 5px">
+        <div class="col-md-3">
+            <div th:replace="~{common/menuPersonalHubs::#m}"></div>
+        </div>
+        <div class="col-md-9">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">首页</a></li>
+                <li class="breadcrumb-item"><a href="/user/center">个人中心</a></li>
+                <li class="breadcrumb-item active">我的消息</li>
+            </ol>
+
+            <div class="card">
+                <div class="card-header bg-white">
+                    <i class="fa fa-bell-o"></i> 消息列表
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0" th:if="${messageList.size()!=0}">
+                        <thead class="thead-light">
+                        <tr>
+                            <th width="20%">时间</th>
+                            <th width="60%">内容摘要</th>
+                            <th width="20%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="msg:${messageList}">
+                            <td th:text="${#dates.format(msg.createTime,'yyyy-MM-dd HH:mm:ss')}" style="font-size: 14px;"></td>
+
+                            <td>
+                                <span th:if="${msg.senderId != null}">
+                                    用户 <strong class="text-primary" th:text="${msg.sender.nickName}"></strong>
+                                    对您的商品 <a th:href="@{'/item/detail/'+${msg.itemId}}" target="_blank" th:text="${msg.idleItem.name}"></a>
+                                    留言
+                                </span>
+                                <span th:if="${msg.senderId == null}">
+                                    <span th:text="${#strings.abbreviate(msg.content, 30)}"></span>
+                                </span>
+                            </td>
+
+                            <td>
+                                <button th:if="${msg.senderId != null}"
+                                        type="button" class="btn btn-outline-primary btn-sm"
+                                        th:data-sid="${msg.senderId}"
+                                        th:data-sname="${msg.sender.nickName}"
+                                        th:data-iid="${msg.itemId}"
+                                        onclick="openChatModal(this.getAttribute('data-sid'), this.getAttribute('data-sname'), this.getAttribute('data-iid'))">
+                                    <i class="fa fa-comments"></i> 查看/回复
+                                </button>
+                                <span th:if="${msg.senderId == null}" class="text-muted small">系统通知</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div th:if="${messageList.size()==0}" class="p-4 text-center text-muted">
+                        暂无消息
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="chatModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">与 <span id="chatTargetName" class="text-primary"></span> 的对话</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="chatHistory" class="chat-box">
+                        <div class="text-center text-muted mt-5"><i class="fa fa-spinner fa-spin"></i> 加载中...</div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" id="replyContent" class="form-control" placeholder="输入回复内容..." onkeydown="if(event.keyCode==13) sendReply()">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" onclick="sendReply()">发送</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="currentReceiverId">
+    <input type="hidden" id="currentItemId">
+
+    <script>
+        // 打开聊天窗口
+        function openChatModal(senderId, senderName, itemId) {
+            $('#chatTargetName').text(senderName);
+            $('#currentReceiverId').val(senderId);
+            $('#currentItemId').val(itemId);
+            $('#chatModal').modal('show');
+            loadChatHistory(senderId, itemId);
+        }
+
+        // 加载聊天记录
+        function loadChatHistory(otherId, itemId) {
+            $.get("/notification/chatHistory", {
+                otherUserId: otherId,
+                itemId: itemId
+            }, function(res) {
+                if (res.success) {
+                    var html = "";
+                    var currentUserId = res.currentUserId;
+
+                    if (!res.data || res.data.length === 0) {
+                        html = '<p class="text-center text-muted">暂无聊天记录</p>';
+                    } else {
+                        $.each(res.data, function(index, msg) {
+                            var isMe = (msg.senderId == currentUserId);
+                            var dateStr = new Date(msg.createTime).toLocaleString();
+
+                            html += '<div class="chat-item ' + (isMe ? 'me' : 'other') + '">';
+                            html += '  <div class="chat-bubble">' + (msg.content ? msg.content : '') + '</div>';
+                            html += '  <div class="chat-meta">' + dateStr + '</div>';
+                            html += '</div>';
+                        });
+                    }
+
+                    $('#chatHistory').html(html);
+                    var div = document.getElementById('chatHistory');
+                    div.scrollTop = div.scrollHeight;
+                } else {
+                    console.error("加载失败");
+                }
+            });
+        }
+
+        // 发送回复
+        function sendReply() {
+            var content = $('#replyContent').val();
+            var receiverId = $('#currentReceiverId').val();
+            var itemId = $('#currentItemId').val();
+
+            if (!content) return;
+
+            $.post("/notification/reply", {
+                receiverId: receiverId,
+                itemId: itemId,
+                content: content
+            }, function(res) {
+                if (res.success) {
+                    $('#replyContent').val("");
+                    loadChatHistory(receiverId, itemId);
+                } else {
+                    alert("发送失败，请重试");
+                }
+            });
+        }
+
+        // 绑定回车事件 (更规范的写法)
+        $(document).ready(function() {
+            $('#replyContent').on('keypress', function(e) {
+                if (e.which === 13) {
+                    sendReply();
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
