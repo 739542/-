@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Console - CampusMarket</title>
+    <link rel="short icon" href="/static/images/favicon.png">
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.7.0/themes/metro-blue/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.7.0/themes/icon.css"/>
+    <script type="text/javascript" src="/static/jquery-easyui-1.7.0/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/static/jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+        function openTab(text, url, iconCls) {
+            if ($("#tabs").tabs("exists", text)) {
+                $("#tabs").tabs("select", text);
+            } else {
+                var content = "<iframe frameborder=0 scrolling='auto' style='width:100%;height:100%' src='/static/admin/" + url + "'></iframe>";
+                $("#tabs").tabs("add", {
+                    title: text,
+                    iconCls: iconCls,
+                    closable: true,
+                    content: content
+                });
+            }
+        }
+
+        function logout() {
+            $.messager.confirm("System", "Logout now?", function (r) {
+                if (r) {
+                    window.location.href = "/user/logout";
+                }
+            });
+        }
+    </script>
+</head>
+<body class="easyui-layout">
+<div region="north" style="height: 78px;background-color: #E0ECFF">
+    <table style="padding: 5px" width="100%">
+        <tr>
+            <td width="50%">
+                <h2 style="margin:0 0 0 20px;">SWU CampusMarket - Admin</h2>
+            </td>
+            <td valign="bottom" align="right" width="50%">
+                <font size="3"><strong>Welcome</strong> admin</font>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div region="west" style="width: 200px" title="Menu" split="true">
+    <div class="easyui-accordion" data-options="fit:true,border:false">
+        <div title="Goods" data-options="selected:true,iconCls:'icon-goodsManage'" style="padding: 10px">
+            <a href="javascript:openTab('Goods','goodsManage.html','icon-goodsManage')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-goodsManage'" style="width: 150px">Goods</a>
+            <a href="javascript:openTab('Categories','goodsTypeManage.html','icon-goodsTypeManage')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-goodsTypeManage'" style="width: 150px">Categories</a>
+        </div>
+
+        <div title="Orders" data-options="iconCls:'icon-payRecordManage'" style="padding: 10px">
+            <a href="javascript:openTab('Orders','reserveRecordManage.html','icon-payRecordManage')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-payRecordManage'" style="width: 150px">Orders</a>
+        </div>
+
+        <div title="Users" data-options="iconCls:'icon-userManage'" style="padding: 10px">
+            <a href="javascript:openTab('Users','userManage.html','icon-userManage')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-userManage'" style="width: 150px">Users</a>
+        </div>
+
+        <div title="System" data-options="iconCls:'icon-item'" style="padding: 10px">
+            <a href="javascript:openTab('Notifications','messageManage.html','icon-messageManage')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-messageManage'" style="width: 150px">Notifications</a>
+            <a href="javascript:openTab('Feedback','contactManage.html','icon-contactManage')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-contactManage'" style="width: 150px">Feedback</a>
+            <a href="javascript:logout()" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-exit'" style="width: 150px">Logout</a>
+        </div>
+    </div>
+</div>
+
+<div region="center">
+    <div class="easyui-tabs" fit="true" border="false" id="tabs">
+        <div title="Home" data-options="iconCls:'icon-home'">
+            <div align="center" style="padding-top: 100px">
+                <font color="red" size="10">Welcome to CampusMarket Admin Console</font>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div region="south" style="height: 25px;padding: 5px" align="center">
+    Copyright 2025 CampusMarket
+</div>
+</body>
+</html>
