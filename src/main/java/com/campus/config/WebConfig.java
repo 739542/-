@@ -21,15 +21,24 @@ public class WebConfig implements WebMvcConfigurer {
         // 访问路径: /static/images/userImage/xxx.jpg
         // 映射到: file:D://campus_data//images//user//xxx.jpg
         registry.addResourceHandler("/static/images/userImage/**")
-                .addResourceLocations("file:" + appProperties.getUserImageFilePath());
+                .addResourceLocations(
+                        "file:" + appProperties.getUserImageFilePath(),
+                        "classpath:/static/images/userImage/"
+                );
 
         // 映射轮播图
         registry.addResourceHandler("/static/images/carouselImage/**")
-                .addResourceLocations("file:" + appProperties.getCarouselImageFilePath());
+                .addResourceLocations(
+                        "file:" + appProperties.getCarouselImageFilePath(),
+                        "classpath:/static/images/carouselImage/"
+                );
 
         // 映射物品/文章图片
         registry.addResourceHandler("/static/images/articleImage/**")
-                .addResourceLocations("file:" + appProperties.getItemImageFilePath());
+                .addResourceLocations(
+                        "file:" + appProperties.getItemImageFilePath(),
+                        "classpath:/static/images/articleImage/"
+                );
 
         // 映射原本的静态资源 (CSS, JS)
         registry.addResourceHandler("/static/**")

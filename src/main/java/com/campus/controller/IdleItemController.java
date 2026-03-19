@@ -300,7 +300,7 @@ public class IdleItemController {
                 dest.getParentFile().mkdirs();
             }
             file.transferTo(dest);
-            String url = "/static/images/itemImage/" + newFileName;
+            String url = "/static/images/articleImage/" + newFileName;
             String callback = request.getParameter("CKEditorFuncNum");
             PrintWriter out = response.getWriter();
             if (callback != null) {

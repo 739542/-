@@ -33,3 +33,4 @@ build/
 .vscode/
 .m2/
 .env
+*_dump.sql
